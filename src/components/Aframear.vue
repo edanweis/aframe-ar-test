@@ -1,9 +1,7 @@
 <template>
-	<div class="wrapper">
-		<a-scene antialias="true" embedded ar>
+		<a-scene  ar>
 			 <a-sphere radius="0.01" position="0 0.005 -0.5"></a-sphere>
 		</a-scene>
-	</div>
 </template>
 
 <script>
@@ -46,6 +44,8 @@ a-scene{
 	position: absolute;
 	left: 0;
 	top: 0;
+	width: 100vw;
+	height: 100vh;
 }
 
 </style>
