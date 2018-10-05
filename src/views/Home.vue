@@ -17,11 +17,11 @@ export default {
   created(){
   	// console.log('navigator.xr: ', navigator.xr)
   	// navigator.xr.addEventListener('devicechange', () => {
-  	  navigator.xr.requestDevice()
-  	  .then(device => {
-  	  	console.log('this is an XR Device!')
-  	    // device is of type XRDevice. Use it to get an XRSession object.
-  	  })
+  	//   navigator.xr.requestDevice()
+  	//   .then(device => {
+  	//   	console.log('this is an XR Device!')
+  	//     // device is of type XRDevice. Use it to get an XRSession object.
+  	//   })
   	// })
 
   }

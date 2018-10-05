@@ -13,24 +13,10 @@ export default {
     }
   },
   watch: {
-    $route (to, from){
-           this.con = null
-       }
+    
      },
   created(){
-    var self = this
-    if (typeof console  != "undefined") 
-        if (typeof console.log != 'undefined')
-            console.olog = console.log;
-        else
-            console.olog = function() {};
-
-    console.log = function(message) {
-        console.olog(message);
-        self.con += '<p>' + message + '</p>';
-    };
-    console.error = console.debug = console.info =  console.log
-
+ 
   },
   computed:{
 

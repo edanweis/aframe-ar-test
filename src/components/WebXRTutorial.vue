@@ -1,6 +1,6 @@
 <template>
 <div>
-    <div ref="blah" id="enter-ar-info" class="demo-card mdl-card mdl-shadow--4dp">
+    <div id="enter-ar-info" class="demo-card mdl-card mdl-shadow--4dp">
       <div class="mdl-card__title">
         <h2 class="mdl-card__title-text">Augmented Reality with the WebXR Device API</h2>
       </div>
@@ -15,6 +15,7 @@
         </a>
       </div>
     </div>
+
     <div id="unsupported-info" class="demo-card mdl-card mdl-shadow--4dp">
       <div class="mdl-card__title">
         <h2 class="mdl-card__title-text">Unsupported Browser</h2>
@@ -24,14 +25,8 @@
       </div>
     </div>
     <div id="stabilization"></div>
-    <div id="info">
-        <span>
-            <a href="https://poly.google.com/view/dK08uQ8-Zm9">Model</a> by
-            <a href="https://poly.google.com/user/f8cGQY15_-g">Naomi Chen</a> /
-            <a href="https://creativecommons.org/licenses/by/2.0/">CC-BY</a>
-        </span><br />
-    </div>
     <canvas v-show="showCanvas" ref="outputCanvas" id="canvas" width="100px" height="800px"></canvas>
+    <a v-if="showCanvas" class="align-center mdl-button mdl-button--raised mdl-button--accent" @click="clickHandler()">Place doggie!</a>
 </div>
 </template>
 <style src="../../public/material.min.css"></style>
@@ -49,8 +44,8 @@ require('../../public/utils.js')
 require("../../public/MTLLoader.js")
 require("../../public/OBJLoader.js")
 
-const MODEL_OBJ_URL = '../../public/ArcticFox_Posed.obj'
-const MODEL_MTL_URL = '../../public/ArcticFox_Posed.mtl'
+const MODEL_OBJ_URL = 'ArcticFox_Posed.obj'
+const MODEL_MTL_URL = 'ArcticFox_Posed.mtl'
 const MODEL_SCALE = 0.1
 
 /**
@@ -85,9 +80,9 @@ export default {
     return {
     	// onXRFrame: null,
     	device: null,
-    	showCanvas: true,
+    	showCanvas: false,
     	XRDevice: false,
-    	onClick: null,
+    	// onClick: null,
     	session: null,
     	renderer: null,
     	gl: null,
@@ -211,25 +206,25 @@ export default {
 
 	  // To help with working with 3D on the web, we'll use three.js. Set up
 	  // the WebGLRenderer, which handles rendering to our session's base layer.
-	  var renderer = new THREE.WebGLRenderer({
+	  this.renderer = new THREE.WebGLRenderer({
 	    alpha: true,
 	    preserveDrawingBuffer: true,
 	  })
-	  renderer.autoClear = false
+	  this.renderer.autoClear = false
 
 	  // We must tell the renderer that it needs to render shadows.
-	  renderer.shadowMap.enabled = true
-	  renderer.shadowMap.type = THREE.PCFSoftShadowMap
+	  this.renderer.shadowMap.enabled = true
+	  this.renderer.shadowMap.type = THREE.PCFSoftShadowMap
 
-	  var gl = renderer.getContext()
+	  this.gl = this.renderer.getContext()
 
 	  // Ensure that the context we want to write to is compatible
 	  // with our XRDevice
-	  gl.setCompatibleXRDevice(this.session.device)
+	  this.gl.setCompatibleXRDevice(this.session.device)
 
 	  // Set our session's baseLayer to an XRWebGLLayer
 	  // using our new renderer's context
-	  this.session.baseLayer = new XRWebGLLayer(this.session, gl)
+	  this.session.baseLayer = new XRWebGLLayer(this.session, this.gl)
 
 	  // A THREE.Scene contains the scene graph for all objects in the
 	  // render scene. Call our utility which gives us a THREE.Scene
@@ -247,6 +242,7 @@ export default {
 	  // Dont await this promise, as we want to start the rendering
 	  // process before this finishes.
 	  DemoUtils.loadModel(MODEL_OBJ_URL, MODEL_MTL_URL).then(model => {
+
 	    this.model = model
 
 	    // Some models contain multiple meshes, so we want to make sure
@@ -272,13 +268,11 @@ export default {
 
 	  // this.frameOfRef = await this.session.requestFrameOfReference('eye-level')
 	  
-	  self.session.requestAnimationFrame(self.onXRFrame())
+	  // self.session.requestAnimationFrame(self.onXRFrame())
 
-	  await this.reqFrame().then((frameOfRef)=>{
-	    	self.frameOfRef = frameOfRef
-	    	console.log('got frame')
-	  		self.session.requestAnimationFrame(self.frameOfRef)
-
+	  this.frameOfRef = await this.reqFrame().then((frameOfRef)=>{
+	  		self.session.requestAnimationFrame(self.onXRFrame)
+	    	return frameOfRef
 	    })
 
 	  
@@ -286,10 +280,10 @@ export default {
 	  // console.log(this.frameOfRef)
 	  
 
-	  window.addEventListener('click', this.onClick)
+	  // window.addEventListener('click', this.onClick)
 	},
 
-	reqFrame(){
+	async reqFrame(){
 		return this.session.requestFrameOfReference('eye-level')
 	},
 
@@ -297,11 +291,10 @@ export default {
    * Called on the XRSession's requestAnimationFrame.
    * Called with the time and XRPresentationFrame.
    */
-  onXRFrame(time, frame) {
-    // console.log(time)
-    console.log(frame)
+  onXRFrame: function(time, frame) {
+  	var self = this
     let session = frame.session
-    let pose = frame.getDevicePose(this.frameOfRef)
+    let pose = frame.getDevicePose(self.frameOfRef)
 
     // Update the reticle's position
     this.reticle.update(this.frameOfRef)
@@ -314,10 +307,10 @@ export default {
     }
 
     // Queue up the next frame
-    session.requestAnimationFrame(this.onXRFrame())
+    session.requestAnimationFrame(this.onXRFrame)
 
     // Bind the framebuffer to our baseLayer's framebuffer
-    gl.bindFramebuffer(gl.FRAMEBUFFER, this.session.baseLayer.framebuffer)
+    this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, this.session.baseLayer.framebuffer)
 
     if (pose) {
       // Our XRFrame has an array of views. In the VR case, we'll have
@@ -325,7 +318,7 @@ export default {
       // have one view.
       for (let view of frame.views) {
         const viewport = session.baseLayer.getViewport(view)
-        renderer.setSize(viewport.width, viewport.height)
+        this.renderer.setSize(viewport.width, viewport.height)
 
         // Set the view matrix and projection matrix from XRDevicePose
         // and XRView onto our THREE.Camera.
@@ -334,12 +327,16 @@ export default {
         this.camera.matrix.getInverse(viewMatrix)
         this.camera.updateMatrixWorld(true)
 
-        renderer.clearDepth()
+        this.renderer.clearDepth()
 
         // Render our scene with our THREE.WebGLRenderer
-        renderer.render(this.scene, this.camera)
+        this.renderer.render(this.scene, this.camera)
       }
     }
+  },
+
+  async getHits(origin, direction){
+  	return this.session.requestHitTest(origin, direction, this.frameOfRef)
   },
 
 
@@ -349,12 +346,12 @@ export default {
    * the screen, and if a hit is found, use it to place our object
    * at the point of collision.
    */
-  async onClick(e) {
+  async clickHandler() {
     // If our model is not yet loaded, abort
     if (!this.model) {
       return
     }
-
+   
     // We're going to be firing a ray from the center of the screen.
     // The requestHitTest function takes an x and y coordinate in
     // Normalized Device Coordinates, where the upper left is (-1, 1)
@@ -378,9 +375,7 @@ export default {
     // https://github.com/immersive-web/hit-test
     const origin = new Float32Array(ray.origin.toArray())
     const direction = new Float32Array(ray.direction.toArray())
-    const hits = this.session.requestHitTest(origin,
-                                                   direction,
-                                                   this.frameOfRef)
+    const hits = await this.getHits(origin, direction)
 
     // If we found at least one hit...
     if (hits.length) {
