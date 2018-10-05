@@ -11,9 +11,11 @@
 
 <script>
 
-import * as THREE from 'three';
+// import * as THREE from 'three';
+// import { Scene, WebGLRenderer } from 'three';
 import * as VRControls from 'three-vrcontrols-module'
 import { ARUtils, ARPerspectiveCamera, ARView, ARDebug, ARDisplay } from 'three.ar.js';
+
 
 
 export default {
@@ -33,14 +35,14 @@ export default {
       BOX_SIZE: 0.2,
       myDebug: null,
       colors: [
-            new THREE.Color( 0xffffff ),
-            new THREE.Color( 0xffff00 ),
-            new THREE.Color( 0xff00ff ),
-            new THREE.Color( 0xff0000 ),
-            new THREE.Color( 0x00ffff ),
-            new THREE.Color( 0x00ff00 ),
-            new THREE.Color( 0x0000ff ),
-            new THREE.Color( 0x000000 )
+            new window.THREE.Color( 0xffffff ),
+            new window.THREE.Color( 0xffff00 ),
+            new window.THREE.Color( 0xff00ff ),
+            new window.THREE.Color( 0xff0000 ),
+            new window.THREE.Color( 0x00ffff ),
+            new window.THREE.Color( 0x00ff00 ),
+            new window.THREE.Color( 0x0000ff ),
+            new window.THREE.Color( 0x000000 )
           ],
 
     }
@@ -70,13 +72,13 @@ export default {
 
       // document.body.appendChild(this.arDebug.getElement());
       // Setup the three.js rendering environment
-      this.renderer = new THREE.WebGLRenderer({ alpha: true });
+      this.renderer = new window.THREE.WebGLRenderer({ alpha: true });
       this.renderer.setPixelRatio(window.devicePixelRatio);
       this.renderer.setSize(window.innerWidth, window.innerHeight);
       this.renderer.autoClear = false;
       this.canvas = this.renderer.domElement;
       document.body.appendChild(this.canvas);
-      this.scene = new THREE.Scene();
+      this.scene = new window.THREE.Scene();
 
       // Creating the ARView, which is the object that handles
       // the rendering of the camera stream behind the three.js
@@ -104,7 +106,7 @@ export default {
       // Create the cube geometry and add it to the scene. Set the position
       // to (Infinity, Infinity, Infinity) so that it won't appear visible
       // until the first hit is found, and move it there
-      var geometry = new THREE.BoxGeometry(BOX_SIZE, BOX_SIZE, BOX_SIZE);
+      var geometry = new window.THREE.BoxGeometry(BOX_SIZE, BOX_SIZE, BOX_SIZE);
       var faceIndices = ['a', 'b', 'c'];
       for (var i = 0; i < geometry.faces.length; i++) {
         var f  = geometry.faces[i];
@@ -119,8 +121,8 @@ export default {
       // world surface.
       // geometry.applyMatrix( new THREE.Matrix4().setTranslation( 0, BOX_SIZE / 2, 0 ) );
       geometry.translate( 0, BOX_SIZE / 2, 0 );
-      var material = new THREE.MeshBasicMaterial({ vertexColors: THREE.VertexColors });
-      this.cube = new THREE.Mesh(geometry, material);
+      var material = new window.THREE.MeshBasicMaterial({ vertexColors: THREE.VertexColors });
+      this.cube = new window.THREE.Mesh(geometry, material);
 
       // Place the cube very far to initialize
       this.cube.position.set(10000, 10000, 10000);
