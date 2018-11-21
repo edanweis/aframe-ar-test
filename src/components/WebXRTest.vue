@@ -10,6 +10,8 @@
 </template>
 
 <script>
+// import * as THREE from 'three';
+// import { Scene, WebGLRenderer } from 'three';
 
 export default {
 

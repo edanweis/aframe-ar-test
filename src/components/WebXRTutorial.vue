@@ -26,7 +26,7 @@
     </div>
     <div id="stabilization"></div>
     <canvas v-show="showCanvas" ref="outputCanvas" id="canvas" width="100px" height="800px"></canvas>
-    <a v-if="showCanvas" class="align-center mdl-button mdl-button--raised mdl-button--accent" @click="clickHandler()">Place doggie!</a>
+    <a v-if="showCanvas" class="align-center mdl-button mdl-button--raised mdl-button--accent" @click="clickHandler()">Tap here</a>
 </div>
 </template>
 <style src="../../public/material.min.css"></style>
@@ -34,42 +34,18 @@
 
 <script>
 import Vuex from 'vuex'
+import {DemoUtils, THREE, Animal, Reticle} from '../../public/utils'
+// import {GLTFLoader} from 'three-full'
 
-// import * as THREE from 'three';
-// import {Reticle} from '../../public/utils.js'
 
-
-// require("../../public/three.js")
-require('../../public/utils.js')
-require("../../public/MTLLoader.js")
-require("../../public/OBJLoader.js")
-
-const MODEL_OBJ_URL = 'ArcticFox_Posed.obj'
-const MODEL_MTL_URL = 'ArcticFox_Posed.mtl'
+const MODEL_OBJ_URL = 'THANKYOU.obj'
+const MODEL_MTL_URL = 'THANKYOU.mtl'
 const MODEL_SCALE = 0.1
 
-/**
- * Container class to manage connecting to the WebXR Device API
- * and handle rendering on every frame.
- */
-
-  /**
-   * Fetches the XRDevice, if available.
-   */
- 
-  /**
-   * Toggle on a class on the page to disable the "Enter AR"
-   * button and display the unsupported browser message.
-   */
 
 
-  /**
-   * Called when the XRSession has begun. Here we set up our three.js
-   * renderer, scene, and camera and attach our XRWebGLLayer to the
-   * XRSession and kick off the render loop.
-   */
+// var Reticle = require('./person.js');
 
-// window.app = new App()
 
 
 export default {
@@ -95,6 +71,9 @@ export default {
   },
   created(){
   	  // this.checkDevice()
+      var s = new Animal
+      console.log(s.species)
+
   },
   mounted(){
   	this.checkDevice()
@@ -196,6 +175,32 @@ export default {
 	  }
 	},
 
+  async loadModel(file){
+
+    return new Promise((resolve, reject) => {
+      var loader = new THREE.GLTFLoader();
+      loader.setCrossOrigin( 'anonymous' );
+      // Load a glTF resource
+      loader.load(
+        // resource URL
+        file, 
+        // called when the resource is loaded
+        function ( gltf ) {
+          return resolve(gltf.scene)
+        },
+        // called while loading is progressing
+        function ( xhr ) {
+          console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+        },
+        // called when loading has errors
+        function ( error ) {
+          console.log( 'An error happened', error );
+          reject(error)
+        }
+      );
+    });
+  },
+
 
 	async onSessionStarted(session) {
 	  var self = this
@@ -237,22 +242,21 @@ export default {
 	  // after using a render target, fixes an issue with shadows.
 	  DemoUtils.fixFramebuffer(this)
 
-	  // Use the DemoUtils.loadModel to load our OBJ and MTL. The promise
-	  // resolves to a THREE.Group containing our mesh information.
-	  // Dont await this promise, as we want to start the rendering
-	  // process before this finishes.
-	  DemoUtils.loadModel(MODEL_OBJ_URL, MODEL_MTL_URL).then(model => {
+	  
 
-	    this.model = model
 
-	    // Some models contain multiple meshes, so we want to make sure
-	    // all of our meshes within the model case a shadow.
-	    this.model.children.forEach(mesh => mesh.castShadow = true)
+    // Instantiate a loader
+    
 
-	    // Every model is different -- you may have to adjust the scale
-	    // of a model depending on the use.
-	    this.model.scale.set(MODEL_SCALE, MODEL_SCALE, MODEL_SCALE)
-	  })
+    this.loadModel('Box.gltf').then(scene=>{
+      console.log('assigning scene to model', scene, this.model)
+      this.model = scene
+      // this.scene.add( this.model );
+      this.model.children.forEach(mesh => mesh.castShadow = true)
+      this.model.scale.set(MODEL_SCALE, MODEL_SCALE, MODEL_SCALE)
+
+    })
+
 
 	  // We'll update the camera matrices directly from API, so
 	  // disable matrix auto updates so three.js doesn't attempt

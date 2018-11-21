@@ -11,7 +11,7 @@
 <script>
 // import "aframe";
 // var AFRAME = require('aframe');
-import { Scene, WebGLRenderer } from 'three';
+// import { Scene, WebGLRenderer } from 'three';
 import { ARUtils, ARPerspectiveCamera, ARView, ARDebug, ARDisplay } from 'three.ar.js';
 require('aframe-ar');
 

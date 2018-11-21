@@ -10,6 +10,8 @@
     "aframe": "^0.8.2",
     "aframe-ar": "^0.2.1-a",
     "three": "^0.97.0",
+    "three-full": "^11.3.2",
+    "three-gltf-loader": "^1.98.0",
     "three-vrcontrols-module": "^2.2.1",
     "three.ar.js": "^0.1.8",
     "vue": "^2.5.17",

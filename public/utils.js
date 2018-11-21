@@ -1,3 +1,5 @@
+'use strict';
+
 /*
  * Copyright 2017 Google Inc. All Rights Reserved.
  * Licensed under the Apache License, Version 2.0 (the 'License');
@@ -13,6 +15,10 @@
  * limitations under the License.
  */
 
+
+import * as THREE from 'three-full';
+
+
 // remaps opacity from 0 to 1
 const opacityRemap = mat => {
   if (mat.opacity === 0) {
@@ -25,7 +31,14 @@ const opacityRemap = mat => {
  * `xrSession.requestHitTest()` to render a ring along a found
  * horizontal surface.
  */
-class Reticle extends THREE.Object3D {
+
+export const Animal = class Animal {
+  constructor(){
+    this.species = 'macau'
+  }
+}
+
+export const Reticle = class Reticle extends THREE.Object3D {
   /**
    * @param {XRSession} xrSession
    * @param {THREE.Camera} camera
@@ -38,15 +51,15 @@ class Reticle extends THREE.Object3D {
     let geometry = new THREE.RingGeometry(0.1, 0.11, 24, 1);
     let material = new THREE.MeshBasicMaterial({ color: 0xffffff });
     // Orient the geometry so its position is flat on a horizontal surface
-    geometry.applyMatrix(new THREE.Matrix4().makeRotationX(THREE.Math.degToRad(-90)));
+    geometry.applyMatrix(new THREE.Matrix4().makeRotationX( -90*(Math.PI/180)));
 
     this.ring = new THREE.Mesh(geometry, material);
 
     geometry = new THREE.PlaneBufferGeometry(0.15, 0.15);
     // Orient the geometry so its position is flat on a horizontal surface,
     // as well as rotate the image so the anchor is facing the user
-    geometry.applyMatrix(new THREE.Matrix4().makeRotationX(THREE.Math.degToRad(-90)));
-    geometry.applyMatrix(new THREE.Matrix4().makeRotationY(THREE.Math.degToRad(0)));
+    geometry.applyMatrix(new THREE.Matrix4().makeRotationX(-90* (Math.PI/180)));
+    geometry.applyMatrix(new THREE.Matrix4().makeRotationY(0* (Math.PI/180)));
     material = new THREE.MeshBasicMaterial({
       color: 0xffffff,
       transparent: true,
@@ -56,7 +69,7 @@ class Reticle extends THREE.Object3D {
 
     // Load the anchor texture and apply it to our material
     // once loaded
-    this.loader.load('../src/assets/Anchor.png', texture => {
+    this.loader.load('../src/public/Anchor.png', texture => {
       this.icon.material.opacity = 1;
       this.icon.material.map = texture;
     });
@@ -100,7 +113,7 @@ class Reticle extends THREE.Object3D {
   }
 }
 
-window.DemoUtils = {
+export const DemoUtils = {
   /**
    * Creates a THREE.Scene containing lights that case shadows,
    * and a mesh that will receive shadows.
@@ -259,3 +272,6 @@ window.DemoUtils = {
     }
   }
 };
+
+
+export {THREE as THREE}
