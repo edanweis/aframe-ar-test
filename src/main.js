@@ -5,6 +5,13 @@ import store from './store'
 
 Vue.config.productionTip = false
 
+var VueTouch = require('vue-touch')
+VueTouch.registerCustomEvent('doubletap', {
+      type: 'tap',
+      taps: 2
+    })
+Vue.use(VueTouch, {name: 'v-touch'})
+
 new Vue({
   router,
   store,

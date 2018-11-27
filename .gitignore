@@ -20,3 +20,7 @@ yarn-error.log*
 *.sln
 *.sw*
 *.max
+*.gltf
+*.obj
+*.mtl
+*.png

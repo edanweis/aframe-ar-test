@@ -127,12 +127,21 @@ export const DemoUtils = {
     // without lights in our scenes. Let's add an ambient light
     // so our material can be visible, as well as a directional light
     // for the shadow.
-    const light = new THREE.AmbientLight(0xffffff, 1);
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.3);
-    directionalLight.position.set(10, 15, 10);
+    // const light = new THREE.AmbientLight(0xffffff, 0.2);
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+    directionalLight.castShadow = true;
+    directionalLight.shadow.mapSize.width = 1024;  // default
+    directionalLight.shadow.mapSize.height = 1024; // default
+    directionalLight.shadow.camera.near = 0.01;    // default
+    directionalLight.shadow.camera.far = 5000;     // default
+    directionalLight.position.set(300, 450, 200);
+
+    // directionalLight.shadow.camera.left = -5000;
+    // directionalLight.shadow.camera.bottom = -5000;
+    // directionalLight.shadow.camera.right = 5000;
+    // directionalLight.shadow.camera.top = 5000;
 
     // We want this light to cast shadow.
-    directionalLight.castShadow = true;
 
     // Make a large plane to receive our shadows
     const planeGeometry = new THREE.PlaneGeometry(2000, 2000);
@@ -142,8 +151,10 @@ export const DemoUtils = {
     // Create a mesh with a shadow material, resulting in a mesh
     // that only renders shadows once we flip the `receiveShadow` property.
     const shadowMesh = new THREE.Mesh(planeGeometry, new THREE.ShadowMaterial({
-      color: 0x111111,
-      opacity: 0.2,
+      color: '0xFFFFFF',
+      // metalness: 0,
+      // roughness: 0
+      // opacity: 0.2,
     }));
 
     // Give it a name so we can reference it later, and set `receiveShadow`
@@ -154,7 +165,7 @@ export const DemoUtils = {
 
     // Add lights and shadow material to scene.
     scene.add(shadowMesh);
-    scene.add(light);
+    // scene.add(light);
     scene.add(directionalLight);
 
     return scene;
